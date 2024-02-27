@@ -17,17 +17,10 @@ jobs:
         id: pr_info
         run: |
           PR_AUTHOR=$(echo "${{ github.event.pull_request.user.login }}")
-          PR_NUMBER=$(echo "${{ github.event.pull_request.number }}")
           echo "PR Author: $PR_AUTHOR"
-          echo "PR Number: $PR_NUMBER"
 
       - name: Get Commit Count
         id: commit_count
         run: |
-          COMMIT_COUNT=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr_info.outputs.PR_NUMBER }}/commits" | jq -r 'length')
-
+          COMMIT_COUNT=$(curl -s "https://api.github.com/repos/ant-design/ant-design/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" | jq -r 'length')
           echo "Commit Count: $COMMIT_COUNT"
-
-      - name: Set Commit Count Output
-        run: echo "CommitCount=${{ steps.commit_count.outputs.COMMIT_COUNT }}" >> $GITHUB_ENV
