@@ -1,0 +1,33 @@
+name: Get Author's Commit Count
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  get-commit-count:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Get PR Information
+        id: pr_info
+        run: |
+          PR_AUTHOR=$(echo "${{ github.event.pull_request.user.login }}")
+          PR_NUMBER=$(echo "${{ github.event.pull_request.number }}")
+          echo "PR Author: $PR_AUTHOR"
+          echo "PR Number: $PR_NUMBER"
+
+      - name: Get Commit Count
+        id: commit_count
+        run: |
+          COMMIT_COUNT=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr_info.outputs.PR_NUMBER }}/commits" | jq -r 'length')
+
+          echo "Commit Count: $COMMIT_COUNT"
+
+      - name: Set Commit Count Output
+        run: echo "CommitCount=${{ steps.commit_count.outputs.COMMIT_COUNT }}" >> $GITHUB_ENV
