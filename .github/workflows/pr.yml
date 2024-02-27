@@ -19,12 +19,31 @@ jobs:
           PR_AUTHOR=$(echo "${{ github.event.pull_request.user.login }}")
           echo "PR Author: $PR_AUTHOR"
 
+      # - name: Get Commit Count
+      #   id: commit_count
+      #   run: |
+      #     sudo apt install jq
+      #     COMMIT_COUNT=$(curl -s \
+      #     "https://api.github.com/repos/${{ github.repository }}/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" \
+      #      | jq -r 'length')
+      #     echo "Commit Count: $COMMIT_COUNT"
+
+      - name: Install jq
+        run: |
+          if ! command -v jq &> /dev/null; then
+              sudo apt-get update
+              sudo apt-get install -y jq
+          fi
+
       - name: Get Commit Count
         id: commit_count
         run: |
-          COMMIT_COUNT=$(curl -s \
-          "https://api.github.com/repos/${{ github.repository }}/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" \
-           | jq -r 'length')
+          # 假设 API 返回的 JSON 数据存储在文件 response.json 中
+          json_data=$(curl -s "https://api.github.com/repos/${{ github.repository }}/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}")
+
+          # 使用 jq 处理 JSON，获取数组长度
+          COMMIT_COUNT=$(echo "$json_data" | jq 'length')
+
           echo "Commit Count: $COMMIT_COUNT"
 
       - name: need post
