@@ -23,7 +23,10 @@ jobs:
         id: commit_count
         run: |
           COMMIT_COUNT=$(curl -s \
-          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" \
+          "https://api.github.com/repos/${{ github.repository }}/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" \
            | jq -r 'length')
           echo "Commit Count: $COMMIT_COUNT"
-          echo "www: ${{ steps.pr_info.outputs.PR_AUTHOR }}"
+
+      - name: need post
+        if: steps.commit_count.outputs.COMMIT_COUNT > 2
+        run: echo "need post"
