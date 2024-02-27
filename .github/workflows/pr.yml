@@ -22,5 +22,8 @@ jobs:
       - name: Get Commit Count
         id: commit_count
         run: |
-          COMMIT_COUNT=$(curl -s "https://api.github.com/repos/ant-design/ant-design/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" | jq -r 'length')
+          COMMIT_COUNT=$(curl -s \
+          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" \
+           | jq -r 'length')
           echo "Commit Count: $COMMIT_COUNT"
+          echo "www: ${{ steps.pr_info.outputs.PR_AUTHOR }}"
