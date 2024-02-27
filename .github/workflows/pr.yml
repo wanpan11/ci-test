@@ -1,0 +1,26 @@
+name: Get Author's Commit Count
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  get-commit-count:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Get PR Information
+        id: pr_info
+        run: |
+          PR_AUTHOR=$(echo "${{ github.event.pull_request.user.login }}")
+          echo "PR Author: $PR_AUTHOR"
+
+      - name: Get Commit Count
+        id: commit_count
+        run: |
+          COMMIT_COUNT=$(curl -s "https://api.github.com/repos/ant-design/ant-design/commits?author=${{ steps.pr_info.outputs.PR_AUTHOR }}" | jq -r 'length')
+          echo "Commit Count: $COMMIT_COUNT"
