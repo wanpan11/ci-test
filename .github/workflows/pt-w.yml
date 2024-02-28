@@ -26,6 +26,7 @@ jobs:
         run: |
           PR_AUTHOR=$(echo "${{ github.event.pull_request.user.login }}")
           echo "PR Author: $PR_AUTHOR"
+          echo "https://api.github.com/repos/${{ github.repository }}/commits?author=${PR_AUTHOR}&per_page=5"
 
           RESULT_DATA=$(curl -s "https://api.github.com/repos/${{ github.repository }}/commits?author=${PR_AUTHOR}&per_page=5")
           DATA_LENGTH=$(echo $RESULT_DATA | jq 'if type == "array" then length else 0 end')
