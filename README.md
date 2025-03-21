@@ -1,5 +1,3 @@
 # ci-test
 
-- 1
-- 2
-- 3
+GitHub actions 测试
